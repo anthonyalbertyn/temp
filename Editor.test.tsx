@@ -32,7 +32,7 @@ describe('Editor', () => {
     expect(screen.queryByText('Test Label')).not.toBeInTheDocument();
   });
 
-  it('renders the Quill editor', () => {
+  it('renders the Quill editor with ReactQuill', () => {
     render(
       <Wrapper>
         <Editor label="Your Message" name="test" />
@@ -40,7 +40,7 @@ describe('Editor', () => {
     );
 
     // Check if the Quill editor container is rendered
-    const quillEditor = screen.getByRole('textbox'); // Quill editor has a "textbox" role
+    const quillEditor = screen.getByRole('textbox');
     expect(quillEditor).toBeInTheDocument();
   });
 
@@ -49,7 +49,7 @@ describe('Editor', () => {
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
-  it('can be used with react-hook-form and Quill', () => {
+  it('can be used with react-hook-form and ReactQuill', () => {
     render(
       <Wrapper>
         <Editor label="Test Label" name="test" withController />
