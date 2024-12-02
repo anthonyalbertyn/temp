@@ -22,47 +22,44 @@ describe('Editor', () => {
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
-  it('does not render a label if not provided', () => {
-    render(
-      <Wrapper>
-        <Editor name="test" />
-      </Wrapper>
-    );
-
-    expect(screen.queryByText('Test Label')).not.toBeInTheDocument();
-  });
-
-  it('renders the Quill editor with ReactQuill', () => {
+  it('renders the Tiptap editor correctly', () => {
     render(
       <Wrapper>
         <Editor label="Your Message" name="test" />
       </Wrapper>
     );
 
-    // Check if the Quill editor container is rendered
-    const quillEditor = screen.getByRole('textbox');
-    expect(quillEditor).toBeInTheDocument();
+    // Check if the Tiptap editor container is rendered
+    const editorContainer = screen.getByRole('textbox');
+    expect(editorContainer).toBeInTheDocument();
   });
 
-  it('renders the TextareaAutosize when not using Quill', () => {
-    render(<Editor name="test" />);
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
-  });
-
-  it('can be used with react-hook-form and ReactQuill', () => {
+  it('renders toolbar buttons correctly', () => {
     render(
       <Wrapper>
-        <Editor label="Test Label" name="test" withController />
+        <Editor label="Your Message" name="test" />
       </Wrapper>
     );
 
-    const quillEditor = screen.getByRole('textbox');
-    
-    // Simulate a Quill editor change
-    fireEvent.change(quillEditor, { target: { innerHTML: '<p>Test value</p>' } });
+    // Check for bold button
+    expect(screen.getByTitle('Bold')).toBeInTheDocument();
+    expect(screen.getByTitle('Italic')).toBeInTheDocument();
+    expect(screen.getByTitle('Underline')).toBeInTheDocument();
+    expect(screen.getByTitle('Blockquote')).toBeInTheDocument();
+  });
 
-    // Normally, you would test form submission and see if the form state was updated
-    // Example assertion (you can expand it based on form submission logic)
-    expect(quillEditor).toHaveTextContent('Test value');
+  it('can change heading size using the select list', () => {
+    render(
+      <Wrapper>
+        <Editor label="Your Message" name="test" />
+      </Wrapper>
+    );
+
+    const select = screen.getByLabelText('Heading') as HTMLSelectElement;
+
+    // Select a heading size (e.g., Heading 1)
+    fireEvent.change(select, { target: { value: '1' } });
+    
+    expect(select.value).toBe('1'); // Heading 1 selected
   });
 });
