@@ -1,59 +1,34 @@
 // src/components/Editor.tsx
 
-import React, { useEffect, useRef } from 'react';
-import { TextField, TextareaAutosize } from '@mui/material';
+import React, { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import Quill from 'quill';
-import 'quill/dist/quill.snow.css'; // Import Quill's default theme CSS
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Import Quill's default theme CSS
+import { TextField, TextareaAutosize } from '@mui/material';
 
-interface EditorProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface EditorProps {
   withController?: boolean;
   label?: string;
   name: string;
+  placeholder?: string;
 }
 
 const Editor: React.FC<EditorProps> = ({
   withController = false,
   label,
   name,
-  ...props
+  placeholder = "Start typing here...",
 }) => {
   const { control } = useFormContext();
-  const quillRef = useRef<HTMLDivElement | null>(null);
-  const quillInstance = useRef<Quill | null>(null);
 
-  // Initialize Quill editor
-  useEffect(() => {
-    if (quillRef.current) {
-      const options = {
-        theme: 'snow',
-        modules: {
-          toolbar: [
-            [{ 'bold': true }, { 'italic': true }, { 'underline': true }],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-            ['blockquote'],
-          ],
-        },
-      };
-
-      quillInstance.current = new Quill(quillRef.current, options);
-
-      // Bind Quill content to form value for react-hook-form
-      if (control) {
-        const { setValue } = useFormContext();
-        quillInstance.current.on('text-change', () => {
-          setValue(name, quillInstance.current?.root.innerHTML);
-        });
-      }
-    }
-
-    return () => {
-      // Cleanup Quill instance on unmount
-      if (quillInstance.current) {
-        quillInstance.current = null;
-      }
-    };
-  }, [name, control]);
+  // Default options for Quill's toolbar
+  const modules = {
+    toolbar: [
+      [{ 'bold': true }, { 'italic': true }, { 'underline': true }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      ['blockquote'],
+    ],
+  };
 
   const renderEditor = () => {
     if (withController && control) {
@@ -62,12 +37,12 @@ const Editor: React.FC<EditorProps> = ({
           name={name}
           control={control}
           render={({ field }) => (
-            <TextField
+            <ReactQuill
               {...field}
-              label={label}
-              multiline
-              minRows={4}
-              {...props}
+              theme="snow"
+              modules={modules}
+              placeholder={placeholder}
+              onChange={(value) => field.onChange(value)}
             />
           )}
         />
@@ -76,9 +51,9 @@ const Editor: React.FC<EditorProps> = ({
 
     return (
       <TextareaAutosize
-        {...props}
-        minRows={4}
         style={{ width: '100%' }}
+        minRows={4}
+        placeholder={placeholder}
       />
     );
   };
@@ -86,7 +61,7 @@ const Editor: React.FC<EditorProps> = ({
   return (
     <div>
       {label && <label>{label}</label>}
-      <div ref={quillRef} {...props}></div>
+      {renderEditor()}
     </div>
   );
 };
