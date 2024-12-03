@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
-import dynamic from 'next/dynamic';
-import { EditorProps } from '@ckeditor/ckeditor5-react';
-import '@ckeditor/ckeditor5-build-classic/build/translations/en.js';
+import CKEditor from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
-// Dynamically import CKEditor to avoid server-side rendering issues in Next.js
-const CKEditor = dynamic(() => import('@ckeditor/ckeditor5-react').then((module) => module.Editor), { ssr: false });
+// Define the types for the CKEditor change event
+type EditorChangeEvent = {
+  editor: {
+    getData: () => string;
+  };
+};
 
 const Editor: React.FC = () => {
   const [editorState, setEditorState] = useState<string>('');
 
-  const handleEditorChange = (event: any, editor: any) => {
+  // Handle editor changes and update state with editor's content
+  const handleEditorChange = (event: EditorChangeEvent, editor: any): void => {
     setEditorState(editor.getData());
   };
 
-  // Configuration for CKEditor
-  const editorConfig: EditorProps['config'] = {
+  // CKEditor configuration for the toolbar and features
+  const editorConfig = {
     toolbar: [
       'heading',
       '|',
@@ -44,7 +48,7 @@ const Editor: React.FC = () => {
       <h2 className="text-xl font-semibold text-gray-800">Rich Text Editor</h2>
       <div className="border border-gray-300 p-4 rounded-lg shadow-sm bg-white">
         <CKEditor
-          editor={require('@ckeditor/ckeditor5-build-classic')}
+          editor={ClassicEditor}
           config={editorConfig}
           data={editorState}
           onChange={handleEditorChange}
