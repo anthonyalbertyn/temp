@@ -1,0 +1,1 @@
+npm install @tiptap/react @tiptap/starter-kit @tiptap/extension-heading @tiptap/extension-bold @tiptap/extension-italic @tiptap/extension-underline @tiptap/extension-list-item @tiptap/extension-bullet-list @tiptap/extension-ordered-list @tiptap/extension-blockquote @tiptap/extension-indent @mui/material @emotion/react @emotion/styled tailwindcss postcss autoprefixer
