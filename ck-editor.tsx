@@ -1,23 +1,22 @@
 import React, { useState } from 'react';
-import CKEditor from '@ckeditor/ckeditor5-react';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { Editor } from '@ckeditor/ckeditor5-core';
 
-// Define the types for the CKEditor change event
-type EditorChangeEvent = {
-  editor: {
-    getData: () => string;
+// Define the props for your EditorComponent
+interface EditorProps {
+  value: string;
+  onChange: (data: string) => void;
+}
+
+const EditorComponent: React.FC<EditorProps> = ({ value, onChange }) => {
+  // Handle editor content changes
+  const handleEditorChange = (event: Event, editor: Editor) => {
+    const data = editor.getData();
+    onChange(data); // Pass the updated content to the parent component
   };
-};
 
-const Editor: React.FC = () => {
-  const [editorState, setEditorState] = useState<string>('');
-
-  // Handle editor changes and update state with editor's content
-  const handleEditorChange = (event: EditorChangeEvent, editor: any): void => {
-    setEditorState(editor.getData());
-  };
-
-  // CKEditor configuration for the toolbar and features
+  // Configuration for the CKEditor
   const editorConfig = {
     toolbar: [
       'heading',
@@ -50,16 +49,12 @@ const Editor: React.FC = () => {
         <CKEditor
           editor={ClassicEditor}
           config={editorConfig}
-          data={editorState}
+          data={value}
           onChange={handleEditorChange}
         />
-      </div>
-      <div className="mt-4">
-        <h3 className="text-lg font-medium">Editor Output (HTML):</h3>
-        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">{editorState}</div>
       </div>
     </div>
   );
 };
 
-export default Editor;
+export default EditorComponent;
